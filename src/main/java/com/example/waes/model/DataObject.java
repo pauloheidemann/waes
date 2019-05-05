@@ -1,5 +1,7 @@
 package com.example.waes.model;
 
+import java.util.Base64;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
@@ -11,7 +13,7 @@ public class DataObject {
 
 	@EmbeddedId
 	private DataObjectPK dataObjectPK;
-	private String data;
+	private byte[] data;
 
 	public DataObjectPK getDataObjectPK() {
 		if(dataObjectPK == null)
@@ -23,12 +25,15 @@ public class DataObject {
 		this.dataObjectPK = dataObjectPK;
 	}
 
-	public String getData() {
-		return data;
+	public byte[] getData() {
+		if(data != null)
+			return Base64.getDecoder().decode(data);
+		else
+			return data;
 	}
 
 	public void setData(String data) {
-		this.data = data;
+		this.data = data.getBytes();
 	}
 
 	@Override

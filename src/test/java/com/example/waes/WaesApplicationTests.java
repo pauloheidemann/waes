@@ -17,6 +17,9 @@ import com.example.waes.service.DataObjectService;
 @SpringBootTest
 public class WaesApplicationTests {
 
+	private static final String DATA = "ZGF0YQ==";
+	private static final String DATA2 = "ZGF0YTI=";
+
 	private static long ID = 1;
 
 	@Autowired
@@ -25,7 +28,7 @@ public class WaesApplicationTests {
 	@Test
 	public void saveEntity() {
 		try {
-			DataObject dataObject = mockDataObject(1, "data");
+			DataObject dataObject = mockDataObject(1, DATA);
 			service.save(dataObject);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -34,18 +37,60 @@ public class WaesApplicationTests {
 	}
 
 	@Test
-	public void diff() {
+	public void diffDiferentSize() {
 		try {
 			// inserting left
-			DataObject dataObject = mockDataObject(1, "data");
+			DataObject dataObject = mockDataObject(1, DATA);
 			service.save(dataObject);
 
 			// inserting right
-			DataObject dataObject2 = mockDataObject(2, "data2");
+			DataObject dataObject2 = mockDataObject(2, DATA2);
 			dataObject2.getDataObjectPK().setId(dataObject.getDataObjectPK().getId());
 			service.save(dataObject2);
 
-			service.diff(dataObject.getDataObjectPK().getId());
+			String diff = service.diff(dataObject.getDataObjectPK().getId());
+			Assert.assertEquals(DataObjectService.DIFFERENT_SIZE, diff);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void diffSameObject() {
+		try {
+			// inserting left
+			DataObject dataObject = mockDataObject(1, DATA);
+			service.save(dataObject);
+
+			// inserting right
+			DataObject dataObject2 = mockDataObject(2, DATA);
+			dataObject2.getDataObjectPK().setId(dataObject.getDataObjectPK().getId());
+			service.save(dataObject2);
+
+			String diff = service.diff(dataObject.getDataObjectPK().getId());
+			Assert.assertEquals(DataObjectService.EQUAL, diff);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
+	}
+	
+	@Test
+	public void diff() {
+		try {
+			// inserting left
+			DataObject dataObject = mockDataObject(1, DATA);
+			service.save(dataObject);
+
+			// inserting right
+			DataObject dataObject2 = mockDataObject(2, "tada");
+			dataObject2.getDataObjectPK().setId(dataObject.getDataObjectPK().getId());
+			service.save(dataObject2);
+
+			String diff = service.diff(dataObject.getDataObjectPK().getId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,7 +100,7 @@ public class WaesApplicationTests {
 
 	@Test(expected = ValidationException.class)
 	public void saveEntityWithSameIdAndOperation() throws Exception {
-		DataObject dataObject = mockDataObject(1, "data");
+		DataObject dataObject = mockDataObject(1, DATA);
 		service.save(dataObject);
 		service.save(dataObject);
 	}

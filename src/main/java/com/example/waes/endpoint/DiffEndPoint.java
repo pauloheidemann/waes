@@ -6,8 +6,6 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,11 +18,11 @@ public class DiffEndPoint {
 	@Autowired
 	private DataObjectService service;
 	
-	@PostMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
-	Response dataLeft(@PathVariable Long id, @RequestBody String data) {
+	@GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
+	Response diff(@PathVariable Long id) {
 		try {
-			service.diff(id);
-			return Response.ok("ok").build();
+			String diff = service.diff(id);
+			return Response.ok(diff).build();
 		} catch (Exception e) {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}

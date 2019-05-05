@@ -13,9 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.example.waes.model.DataObject;
 import com.example.waes.repository.DataObjectRepository;
-import com.github.difflib.DiffUtils;
-import com.github.difflib.algorithm.DiffException;
-import com.github.difflib.patch.Patch;
 
 /**
  * @author Paulo Henrique Heidemann Class responsible for the business rules for
@@ -24,6 +21,9 @@ import com.github.difflib.patch.Patch;
 @Component
 public class DataObjectService {
 
+	public static final String EQUAL = "equal";
+	public static final String DIFFERENT_SIZE = "different size";
+	
 	@Autowired
 	private DataObjectRepository repository;
 
@@ -64,15 +64,32 @@ public class DataObjectService {
 	 * Verify if there is a diff between the data of the DataObjects sent
 	 * 
 	 * @param dataObjects
-	 * @throws DiffException
+	 * @throws ValidationException
 	 */
-	public void diff(Long id) throws DiffException {
+	public String diff(Long id) throws ValidationException {
 		List<DataObject> dataObjects = this.findAllById(id);
-		Patch<String> diff = null;
-		for (int i = 0; i < dataObjects.size(); i++) {
-			diff = DiffUtils.diff(Arrays.asList(dataObjects.get(i).getData()),
-					Arrays.asList(dataObjects.get(++i).getData()));
-		}
+		if(dataObjects.size() != 2)
+			throw new ValidationException("There aren't enough values for comparison");
+		
+		return compareDiff(dataObjects);
+	}
+
+	/**
+	 * 
+	 * @param dataObjects
+	 * @return
+	 */
+	private String compareDiff(List<DataObject> dataObjects) {
+		byte[] data = dataObjects.get(0).getData();
+		byte[] dataAnotherDataObject = dataObjects.get(1).getData();
+		
+		if(data.length != dataAnotherDataObject.length)
+			return DIFFERENT_SIZE;
+		boolean byteComparison = Arrays.equals(data, dataAnotherDataObject);
+		if(byteComparison)
+			return EQUAL;
+		else
+			return "the difference is" ;
 	}
 
 }
