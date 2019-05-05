@@ -4,6 +4,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,13 +15,13 @@ import com.example.waes.model.DataObject;
 import com.example.waes.service.DataObjectService;
 
 @RestController
-@RequestMapping("v1/diff")
+@RequestMapping("/v1/diff")
 public class LeftEndPoint {
 	
 	@Autowired
 	private DataObjectService service;
 	
-	@PostMapping(path = "{id}/left", produces = "application/json")
+	@PostMapping(value = "/{id}/left", produces = "application/json", consumes = "application/json")
 	Response dataLeft(@PathVariable Long id, @RequestBody String data) {
 		try {
 			DataObject dataObject = new DataObject();
@@ -32,6 +33,11 @@ public class LeftEndPoint {
 		} catch (Exception e) {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
+	}
+	
+	@GetMapping("/left")
+	Response healthCheck() {
+		return Response.ok().build();
 	}
 
 }
