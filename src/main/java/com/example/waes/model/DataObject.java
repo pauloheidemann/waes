@@ -26,14 +26,11 @@ public class DataObject {
 	}
 
 	public byte[] getData() {
-		if(data != null)
-			return Base64.getDecoder().decode(data);
-		else
-			return data;
+		return data;
 	}
 
 	public void setData(String data) {
-		this.data = data.getBytes();
+		this.data = Base64.getDecoder().decode(data);
 	}
 
 	@Override

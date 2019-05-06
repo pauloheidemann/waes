@@ -1,6 +1,5 @@
 package com.example.waes.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.waes.model.DataObject;
 import com.example.waes.repository.DataObjectRepository;
+import com.google.common.primitives.UnsignedBytes;
 
 /**
  * @author Paulo Henrique Heidemann Class responsible for the business rules for
@@ -85,11 +85,11 @@ public class DataObjectService {
 		
 		if(data.length != dataAnotherDataObject.length)
 			return DIFFERENT_SIZE;
-		boolean byteComparison = Arrays.equals(data, dataAnotherDataObject);
-		if(byteComparison)
+		int diff = UnsignedBytes.lexicographicalComparator().compare(data, dataAnotherDataObject);
+		if(diff == 0)
 			return EQUAL;
 		else
-			return "the difference is" ;
+			return "the difference is " + diff ;
 	}
 
 }

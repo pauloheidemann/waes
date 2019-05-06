@@ -3,6 +3,7 @@ package com.example.waes;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ValidationException;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +18,11 @@ import com.example.waes.service.DataObjectService;
 @SpringBootTest
 public class WaesApplicationTests {
 
-	private static final String DATA = "ZGF0YQ==";
-	private static final String DATA2 = "ZGF0YTI=";
+	//010101
+	private static final String DATA = "MDEwMTAx";
 
-	private static long ID = 1;
+	//010111
+	private static final String DATA2 = "MDEwMTEx";
 
 	@Autowired
 	private DataObjectService service;
@@ -44,7 +46,7 @@ public class WaesApplicationTests {
 			service.save(dataObject);
 
 			// inserting right
-			DataObject dataObject2 = mockDataObject(2, DATA2);
+			DataObject dataObject2 = mockDataObject(2, "MDEwMTExMTE=");
 			dataObject2.getDataObjectPK().setId(dataObject.getDataObjectPK().getId());
 			service.save(dataObject2);
 
@@ -86,11 +88,12 @@ public class WaesApplicationTests {
 			service.save(dataObject);
 
 			// inserting right
-			DataObject dataObject2 = mockDataObject(2, "tada");
+			DataObject dataObject2 = mockDataObject(2, DATA2);
 			dataObject2.getDataObjectPK().setId(dataObject.getDataObjectPK().getId());
 			service.save(dataObject2);
 
 			String diff = service.diff(dataObject.getDataObjectPK().getId());
+			Assert.assertThat(diff, CoreMatchers.containsString("the difference is "));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,8 +114,9 @@ public class WaesApplicationTests {
 	}
 
 	private DataObject mockDataObject(int operation, String data) {
+		DiffEndpointTest.ID++;
 		DataObject dataObject = new DataObject();
-		dataObject.getDataObjectPK().setId(ID++);
+		dataObject.getDataObjectPK().setId(DiffEndpointTest.ID);
 		dataObject.getDataObjectPK().setOperation(operation);
 		dataObject.setData(data);
 		return dataObject;

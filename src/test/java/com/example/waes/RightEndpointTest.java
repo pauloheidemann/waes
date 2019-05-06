@@ -26,8 +26,9 @@ public class RightEndpointTest {
 	@Test
 	public void save() {
 		try {
+			DiffEndpointTest.ID++;
 			mvc.perform(
-					MockMvcRequestBuilders.post("/v1/diff/1/right")
+					MockMvcRequestBuilders.post("/v1/diff/" + DiffEndpointTest.ID + "/right")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content("data"))
 			.andExpect(MockMvcResultMatchers.status().isOk());

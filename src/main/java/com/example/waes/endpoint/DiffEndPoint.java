@@ -1,9 +1,9 @@
 package com.example.waes.endpoint;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +19,12 @@ public class DiffEndPoint {
 	private DataObjectService service;
 	
 	@GetMapping(value = "/{id}", produces = "application/json", consumes = "application/json")
-	Response diff(@PathVariable Long id) {
+	ResponseEntity<String> diff(@PathVariable Long id) {
 		try {
 			String diff = service.diff(id);
-			return Response.ok(diff).build();
+			return ResponseEntity.ok(diff);
 		} catch (Exception e) {
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+			return ResponseEntity.badRequest().build();
 		}
 	}
 	
